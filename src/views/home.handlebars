@@ -1,0 +1,23 @@
+<div> 
+    <h1>Hola! {{mensaje}}</h1>
+    {{>contador}} {{!accedo al archivo "contador.handlebars" y sus 2 botones, de la misma manera que se puede acceder a todos los archivos de la carpeta partials}}
+    <p>Hola,{{user.nombre}}</p>  
+    {{#if isTutor}}
+    <p>Sos un tutor</p>
+
+    {{#each cursos}} {{!#each es el equivalente a forEach. POR CADA CURSO}}
+
+    <div>
+        <p> {{this.numComision}}</p>
+        <p> {{this.dias}}</p>
+        <p> {{this.horario}}</p>
+
+
+    </div>
+
+    {{/each}}
+
+    {{else}}
+    <p>No sos tutor</p>
+    {{/if}} {{!finaliza if}}
+</div>
