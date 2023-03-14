@@ -3,12 +3,12 @@ import { productModel } from "../models/ProductSchema.js";
 
 class CartMongooseManager {
   existCarts = async (id) => {
-    let cartsAll = await cartsModel.find();
-    return cartsAll.find((cart) => cart.id === id);
+    let carts = await cartsModel.find();
+    return carts.find((cart) => cart.id === id);
   };
   existProduct = async (id) => {
-    let productsAll = await productModel.find();
-    return productsAll.find((product) => product.id === id);
+    let products = await productModel.find();
+    return products.find((product) => product.id === id);
   };
 
   findCarts = async () => {

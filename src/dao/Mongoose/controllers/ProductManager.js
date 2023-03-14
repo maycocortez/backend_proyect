@@ -17,31 +17,31 @@ class CrudMongoose {
   };
   findProductsById = async (id) => {
     let product = await this.exist(id);
-    if (!product) return "Producto no Encontrado";
+    if (!product) return "Product not found";
     return product;
   };
 
   createProducts = async (newProduct) => {
     if (this.objectKeys(newProduct) === 400)
-      return "JSON incompleto. Faltan 1 o mas Datos";
+      return "Incomplete JSON";
     await productModel.create(newProduct);
-    return "Producto Agregado Correctamente";
+    return "Product added succesfully";
   };
 
   updateProducts = async (id, updateProduct) => {
     let product = await this.exist(id);
-    if (!product) return "Producto no Encontrado";
+    if (!product) return "Product not found";
     if (this.objectKeys(updateProduct) === 400)
-      return "JSON incompleto. Faltan 1 o mas Datos";
+      return "incomplete JSON";
     await productModel.findByIdAndUpdate(id, updateProduct);
-    return "Producto Modificado Correctamente";
+    return "Product updated succesfully";
   };
 
   deleteProductsById = async (id) => {
     let product = await this.exist(id);
-    if (!product) return "Producto no Encontrado";
+    if (!product) return "Product not found";
     let result = await productModel.findByIdAndDelete(id);
-    return `Producto ${result.title} Eliminado`;
+    return `Product ${result.title} removed`;
   };
 }
 
