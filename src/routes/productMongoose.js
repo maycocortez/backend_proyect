@@ -9,6 +9,7 @@ productDBRouter.get("/", async (req, res) => {
     res.status(200).send(await productDB.findProducts());
   } catch (err) {
     res.status(404).send("Error en la consulta", err);
+
   }
 });
 productDBRouter.get("/:id", async (req, res) => {

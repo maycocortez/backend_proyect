@@ -1,0 +1,39 @@
+<div class="mainHome">
+  <h2>Chat con Websocket</h2>
+  <div class="chatSocket">
+    <div>
+    <div >
+      <div>
+      </div>
+      <div >
+        <h2 id="userName"></h2>
+        <p id="userTiping"></p>
+      </div>
+    </div>
+    <div >
+      <div class="massajesChat" id="messajesChat">
+          <div class="chat_container">
+            <strong class="chat_title">{{messages.user}}</strong>
+            <p class="chat_txt">{{messages.messaje}}</p>
+            <span class="chat_hs">{{messages.time}}</span>
+          </div>
+      </div>
+      <div class="imputChat">
+         <textarea  id="chatBox" type="text" class="chatBox" placeholder="Mensaje"/></textarea>
+        <button class="chatSend" id="chatSend"><ion-icon name="paper-plane"></ion-icon></button>
+      </div>
+    </div>
+    </div>
+    <div class="userConnection">
+      <div class="userTitle">
+        <strong>User Connection</strong>
+      </div>
+      <div class="usersConnection" id="usersConnection">
+        {{#each users}}
+          <p class="otherUser">{{this.user}}</p>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="js/chatSocket.js"></script>

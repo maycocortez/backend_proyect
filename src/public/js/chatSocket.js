@@ -1,5 +1,3 @@
-
-
 const userName = document.getElementById("userName");
 const userTiping = document.getElementById("userTiping");
 const chatBox = document.getElementById("chatBox");

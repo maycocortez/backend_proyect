@@ -12,6 +12,17 @@ import {Server} from 'socket.io'
 import userRouter from './routes/user.js'
 import cartsDBRouter from "./routes/cartsMongoose.js"
 import productDBRouter from "./routes/productMongoose.js"
+import chatRouter from "./routes/chatMongoose.js"
+import { dateShort } from "./utils/path.js"
+import { chatModel } from "./dao/Mongoose/models/ChatSchema.js"
+import mongoose from "mongoose"
+
+const uri = process.env.MONGODB_URI
+
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Conectado a la base de datos'))
+  .catch(err => console.error(err));
+
 
 
 
@@ -26,9 +37,17 @@ app.set("port", process.env.PORT || 5000)
 
 const server = app.listen(app.get("port"), () => console.log(`Server on port ${app.get("port")}`))
 
-const io = new Server(server) //guardo mi server en socket
+export const io = new Server(server) //guardo mi server en socket
 
-
+app.engine(
+  "handlebars",
+  engine({
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowedProtoMethodsByDefault: true,
+    },
+  })
+);
 
 //Middlewares
 app.use(express.urlencoded({extended:true}))
@@ -50,16 +69,92 @@ app.use('/',routerSocket)
 app.use('/users',userRouter)
 app.use("/mongoose/products", productDBRouter);
 app.use("/mongoose/carts", cartsDBRouter);
+app.use("/chatSocket", chatRouter);
 
-const mensajes = []
-io.on('connection', (socket) => {  //CUANDO ALGUIEN SE CONECTE
-    console.log("usuario conectado")
-    socket.on('mensaje', info => { //recibo la informacion del que generamos (socket.emit - "mensaje") en main.js con socket.on , mas precisamente la del input que esta en main.handlebars
-        mensajes.push(info) //mando la informacion que recibimos a un array vacio
-        io.emit('mensajesLogs',mensajes) //lo imprimo en la etiqueta "p" de mi html
-    })
-}) 
 
+
+
+let time = dateShort();
+//Usuarios Conectados
+export let usersChat = [];
+//Mensaje de Bienvenida
+const greeting = {
+  user: "Administrador",
+  messaje: "Bienvenido al Chat 👋",
+  time,
+  idUser: "123456543210",
+};
+
+const addChatMongoose = async (messaje) => {
+  await chatModel.create(messaje);
+};
+io.on("connection", (socket) => {
+  console.log(socket.id, "Conectado");
+  socket.on("disconnect", () => {
+    console.log(socket.id, "Desconectado");
+    let user = usersChat.find((user) => user.idUser === socket.id);
+    if (user != undefined) {
+      addChatMongoose({
+        user: user.user,
+        messaje: "se ha desconecto",
+        time: dateShort(),
+        idUser: socket.id,
+        idConnection: "disConnection",
+      });
+      let userUpload = usersChat.filter((user) => user.idUser != socket.id);
+      usersChat = [...userUpload];
+      let findChatMongoose = async () => {
+        if (usersChat.length === 0) await chatModel.deleteMany({});
+        //
+        let allMessajeMongoose = await chatModel.find();
+        io.sockets.emit("userChat", usersChat, allMessajeMongoose);
+      };
+      findChatMongoose();
+    }
+  });
+  socket.on("userChat", (data) => {
+    usersChat.push({
+      user: data.user,
+      idUser: data.id,
+    });
+
+
+    let userConecction = {
+      user: data.user,
+      messaje: data.messaje,
+      time: dateShort(),
+      idUser: data.id,
+      idConnection: "Connection",
+    };
+
+
+    let chat = async () => {
+      let chats = await chatModel.find();
+      if (chats.length === 0) {
+
+
+        await chatModel.create([greeting, userConecction]);
+      } else {
+        await chatModel.create(userConecction);
+      }
+      let allMessajeMongoose = await chatModel.find();
+      io.sockets.emit("userChat", usersChat, allMessajeMongoose);
+    };
+    chat();
+  });
+
+  socket.on("messajeChat", (data) => {
+    addChatMongoose(data);
+    let findChatMongoose = async () => {
+      let allMessajeMongoose = await chatModel.find();
+      io.sockets.emit("messajeLogs", allMessajeMongoose);
+    };
+    findChatMongoose();
+  });
+  socket.on("typing", (data) => {
+    socket.broadcast.emit("typing", data);
+  });
+});
 
 
 
