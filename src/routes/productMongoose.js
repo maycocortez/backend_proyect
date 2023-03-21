@@ -1,6 +1,7 @@
 import { Router } from "express";
 import CrudMongoose from "../dao/Mongoose/controllers/ProductManager.js";
 
+
 const productDBRouter = Router();
 const productDB = new CrudMongoose();
 
@@ -49,3 +50,4 @@ productDBRouter.delete("/:id", async (req, res) => {
 });
 
 export default productDBRouter;
+

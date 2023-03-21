@@ -1,0 +1,36 @@
+<main class="mainHome">
+  <h2>Productos</h2>
+  <div class="containerCards">
+    {{#each products}}
+      <div class="cardContainer">
+        <img
+          class="imgCard"
+          src={{this.thumbnail}}
+          alt={{this.title}}
+        />
+        <div class="priceCard">
+          <p>$</p>
+          <p class="price">{{this.price}}</p>
+        </div>
+        <div class="btnContainer">
+
+        <div class="btnCard">
+          <ion-icon class="icon" name="cart-outline"></ion-icon>
+          <span class="iconTooltip">Añadir al carrito</span>
+        </div>
+        </div>
+        <div class="descriptionCard">
+          <h2 class="titleCard">{{this.title}}</h2>
+          <div class="authorStock">
+            <span>{{this.description}}</span>
+            <div class="stockCard">
+              <span>Stock:</span>
+              <span>{{this.stock}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+  {{> pagination}}
+</main>

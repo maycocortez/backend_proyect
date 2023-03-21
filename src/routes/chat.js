@@ -1,7 +1,7 @@
-import {Router} from 'express'
-import { chatModel } from '../dao/Mongoose/models/ChatSchema.js'
-import { dateShort } from '../utils/path.js';
-import { usersChat } from '../app.js';
+import { Router } from "express";
+import { dateShort } from "../utils.js";
+import { usersChat } from "../index.js";
+import { chatModel } from "../dao/Mongoose/models/ChatSchema.js";
 
 const chatRouter = Router();
 
@@ -10,9 +10,9 @@ chatRouter
     let time = dateShort();
     res.render("chat", {
       title: "Chat Websocket",
-      messages: {
+      messajes: {
         user: "Administrador",
-        messaje: "Bienvenido!",
+        messaje: "Bienvenido al Chat 👋",
         time,
       },
       users: usersChat,

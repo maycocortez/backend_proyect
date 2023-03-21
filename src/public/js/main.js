@@ -1,134 +1,87 @@
-
-
-const userName = document.getElementById("userName");
-const userTiping = document.getElementById("userTiping");
-const chatBox = document.getElementById("chatBox");
-const chatSend = document.getElementById("chatSend");
-const messajesChat = document.getElementById("messajesChat");
-const usersConnection = document.getElementById("usersConnection");
-const socket = io();
-
-let user = "";
-
-const dateShort = () => {
-  let timeNow = new Date();
-  return timeNow.getHours() + ":" + timeNow.getMinutes();
-};
-
-Swal.fire({
-  title: "Usuario",
-  input: "text",
-  text: "Ingrese un Nombre",
-  inputValidator: (data) => {
-    return !data && "Ingrese un Nombre Valido";
-  },
-  allowOutsideClick: false,
-}).then((data) => {
-  let nombre = data.value.replace(/(^\w{1})|(\s+\w{1})/g, (letra) =>
-    letra.toUpperCase()
-  );
-  user = nombre;
-  userName.textContent = user;
-  messajesChat.scrollTop = messajesChat.scrollHeight;
-  socket.emit("userChat", {
-    user,
-    messaje: `se ha conectado`,
-    time: dateShort(),
-    id: socket.id,
-  });
+//Nav Scroll
+window.addEventListener("scroll", () => {
+  let nav = document.querySelector(".nav");
+  nav.classList.toggle("nav-scroll", window.scrollY > 400);
 });
 
-const messajeChatInner = (data) => {
-  let msgAll = "";
-  let classMsg = "";
-  let moreMsg = "";
-  for (let i = 0; i < data.length; i++) {
-    if (
-      data[i].idConnection === "Connection" ||
-      data[i].idConnection === "disConnection"
-    ) {
-      classMsg = "connection";
-    } else if (socket.id != data[i].idUser) {
-      classMsg = "";
-    } else {
-      classMsg = "myMsg";
-    }
-
-    if (data[i - 1] == undefined) {
-      moreMsg = "";
-    } else if (data[i - 1].idConnection === "Connection") {
-      moreMsg = "";
-    } else if (data[i].idUser === data[i - 1].idUser) {
-      moreMsg = "moreMsg";
-    } else {
-      moreMsg = "";
-    }
-
-    msgAll += `
-    <div class="chat_container ${classMsg} ${moreMsg}">
-    <strong class="chat_title">${data[i].user}</strong>
-    <p class="chat_txt">${data[i].messaje}</p>
-    <span class="chat_hs">${data[i].time}</span>
-    </div>
-    `;
-  }
-  return msgAll;
-};
-const userChatInner = (data) => {
-  let userAll = "";
-  let classUser = "";
-  for (let i = 0; i < data.length; i++) {
-    if (socket.id != data[i].idUser) {
-      classUser = "otherUser";
-    } else {
-      classUser = "myUser";
-    }
-    userAll += `<p class="${classUser}">${data[i].user}</p>`;
-  }
-  return userAll;
-};
-
-socket.on("userChat", (users, messajes) => {
-  usersConnection.innerHTML = "";
-  messajesChat.innerHTML = "";
-  let userAll = userChatInner(users);
-  let msgAll = messajeChatInner(messajes);
-  usersConnection.innerHTML = userAll;
-  messajesChat.innerHTML = msgAll;
-  messajesChat.scrollTop = messajesChat.scrollHeight;
-});
-
-chatSend.addEventListener("click", (e) => {
-  if (chatBox.value.trim().length > 0)
-    socket.emit("messajeChat", {
-      user,
-      messaje: chatBox.value,
-      time: dateShort(),
-      idUser: socket.id,
+//Indicador de Seccion
+const menu = document.querySelectorAll(".menu");
+const secciones = document.querySelectorAll(".seccion");
+const seccion = new IntersectionObserver(
+  (items) => {
+    items.forEach((entrada) => {
+      if (entrada.isIntersecting) {
+        let menuActual = Array.from(menu).find(
+          (item) => item.dataset.url === entrada.target.id
+        );
+        menuActual.classList.add("active");
+        for (let menuAnterior of menu) {
+          menuAnterior != menuActual && menuAnterior.classList.remove("active");
+        }
+      }
     });
-  chatBox.value = "";
+  },
+  {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.8,
+  }
+);
+secciones.forEach((item) => seccion.observe(item));
+
+//Menu Hamburguesa
+const hamburger = document.querySelector(".hamburger");
+const nav_mobile = document.querySelector(".nav-mobile-container");
+
+let navItemMobile = document.getElementsByClassName("nav-mobile-item");
+
+let navMobileOpenClose = () => {
+  hamburger.classList.toggle("is-active");
+  nav_mobile.classList.toggle("is-active");
+};
+
+hamburger.addEventListener("click", () => {
+  navMobileOpenClose();
 });
 
-chatBox.addEventListener("keypress", () => {
-  socket.emit("typing", { user });
+for (let i = 0; i < navItemMobile.length; i++) {
+  navItemMobile[i].addEventListener("click", function () {
+    setTimeout(() => {
+      navMobileOpenClose();
+    }, 200);
+  });
+}
+
+//Modal carrito
+const modalCarrito = document.getElementById("modal-carrito");
+const openCarrito = document.getElementById("carrito");
+const openCarritoXs = document.getElementById("carrito_xs");
+const closeCarrito = document.getElementById("close-carrito");
+
+const alertVacio = () => {
+  Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: "El Carrito esta Vacio!",
+    footer: "Vamos a llenar esa Bodega..!!",
+  });
+};
+
+openCarritoXs.addEventListener("click", (e) => {
+  e.preventDefault();
+  console.log(carrito.length);
+  carrito.length === 0
+    ? alertVacio()
+    : modalCarrito.classList.add("modal_show");
 });
 
-socket.on("messajeLogs", (data) => {
-  console.log(data);
-  userTiping.textContent = "";
-  messajesChat.innerHTML = "";
-  let msgAll = messajeChatInner(data);
-  messajesChat.innerHTML = msgAll;
-  messajesChat.scrollTop = messajesChat.scrollHeight;
+openCarrito.addEventListener("click", (e) => {
+  e.preventDefault();
+  carrito.length === 0
+    ? alertVacio()
+    : modalCarrito.classList.add("modal_show");
 });
 
-socket.on("typing", (data) => {
-  userTiping.textContent = `${data.user} escribiendo...`;
-});
-
-socket.on("userDisconnect", (data) => {
-  messajesChat.innerHTML = "";
-  let msgAll = messajeChatInner(data);
-  messajesChat.innerHTML = msgAll;
-  messajesChat.scrollTop = messajesChat.scrollHeight;
+closeCarrito.addEventListener("click", () => {
+  modalCarrito.classList.remove("modal_show");
 });

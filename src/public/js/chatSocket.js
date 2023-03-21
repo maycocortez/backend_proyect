@@ -16,9 +16,9 @@ const dateShort = () => {
 Swal.fire({
   title: "Usuario",
   input: "text",
-  text: "Ingrese un Nombre",
+  text: "Ingrese su nombre",
   inputValidator: (data) => {
-    return !data && "Ingrese un Nombre Valido";
+    return !data && "El nombre no es valido";
   },
   allowOutsideClick: false,
 }).then((data) => {

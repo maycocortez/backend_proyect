@@ -1,43 +1,31 @@
-//BACKEND
-import "dotenv/config"
-
-import express from 'express'
-import routerProd from './routes/product.js'
-import routerCart from "./routes/cart.js"
-import routerSocket from './routes/socket.js'
-import {__dirname} from './path.js'
-import {engine}  from 'express-handlebars'
-import * as path from 'path' 
-import {Server} from 'socket.io' 
-import userRouter from './routes/user.js'
-import cartsDBRouter from "./routes/cartsMongoose.js"
-import productDBRouter from "./routes/productMongoose.js"
-import chatRouter from "./routes/chatMongoose.js"
-import { dateShort } from "./utils/path.js"
-import { chatModel } from "./dao/Mongoose/models/ChatSchema.js"
-import mongoose from "mongoose"
-
-const uri = process.env.MONGODB_URI
-
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Conectado a la base de datos'))
-  .catch(err => console.error(err));
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
+import * as path from "path";
+import __dirname from "./utils.js";
+import { engine } from "express-handlebars";
+import productRouter from "./routes/productFileSystem.js";
+import cartRouter from "./routes/cartsFileSystem.js";
+import socketRouter from "./routes/socket.js";
+import chatRouter from "./routes/chat.js";
+import { Server } from "socket.io";
+import { dateShort } from "./utils.js"; 
+import connectionMongoose from "./connection/mongoose.js"; 
+import productDBRouter from "./routes/productMongoose.js";
+import cartsDBRouter from "./routes/cartsMongoose.js";
+import cartSocketRouter from "./routes/cartsSocket.js";
+import productsRouter from "./routes/productsNew.js";
+import { chatModel } from "./dao/Mongoose/models/ChatSchema.js";
 
 
 
+dotenv.config();
 
-
-
-
-
-
-const app = express()
-app.set("port", process.env.PORT || 5000)
-
-
-const server = app.listen(app.get("port"), () => console.log(`Server on port ${app.get("port")}`))
-
-export const io = new Server(server) //guardo mi server en socket
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.engine(
   "handlebars",
@@ -48,42 +36,34 @@ app.engine(
     },
   })
 );
-
-//Middlewares
-app.use(express.urlencoded({extended:true}))
-app.use(express.json()) 
-app.engine("handlebars",engine()) 
-app.set("view engine","handlebars") 
-app.set('views',path.resolve(__dirname , './views')) 
+app.set("view engine", "handlebars");
+app.set("views", path.resolve(__dirname + "/views"));
 
 
+app.use("/", express.static(__dirname + "/public"));
 
-//routes
-app.use('/',express.static(__dirname + '/public')) 
+export const PORT = 8000
 
-app.use('/api/products',routerProd) 
-
-app.use('/api/carts',routerCart)
-
-app.use('/',routerSocket)
-app.use('/users',userRouter)
-app.use("/mongoose/products", productDBRouter);
-app.use("/mongoose/carts", cartsDBRouter);
-app.use("/chatSocket", chatRouter);
-
-
-
+const server = app.listen(PORT, () =>
+  console.log(`Conexion por express ${server.address().port}`)
+);
+server.on("error", (err) => {
+  console.log(`Error: ${err}`);
+});
+export const io = new Server(server);
 
 let time = dateShort();
-//Usuarios Conectados
+
 export let usersChat = [];
-//Mensaje de Bienvenida
+
+
 const greeting = {
-  user: "Administrador",
-  messaje: "Bienvenido al Chat 👋",
+  user: "Admin",
+  messaje: "Bienvenido!",
   time,
   idUser: "123456543210",
 };
+
 
 const addChatMongoose = async (messaje) => {
   await chatModel.create(messaje);
@@ -94,9 +74,10 @@ io.on("connection", (socket) => {
     console.log(socket.id, "Desconectado");
     let user = usersChat.find((user) => user.idUser === socket.id);
     if (user != undefined) {
+      
       addChatMongoose({
         user: user.user,
-        messaje: "se ha desconecto",
+        messaje: "usuario desconectado",
         time: dateShort(),
         idUser: socket.id,
         idConnection: "disConnection",
@@ -117,8 +98,7 @@ io.on("connection", (socket) => {
       user: data.user,
       idUser: data.id,
     });
-
-
+  
     let userConecction = {
       user: data.user,
       messaje: data.messaje,
@@ -126,13 +106,11 @@ io.on("connection", (socket) => {
       idUser: data.id,
       idConnection: "Connection",
     };
-
-
+    //Subimos el Mensaje a MongoDB
     let chat = async () => {
       let chats = await chatModel.find();
       if (chats.length === 0) {
-
-
+        
         await chatModel.create([greeting, userConecction]);
       } else {
         await chatModel.create(userConecction);
@@ -144,6 +122,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("messajeChat", (data) => {
+    //Subimos Mensaje a MongoDB
     addChatMongoose(data);
     let findChatMongoose = async () => {
       let allMessajeMongoose = await chatModel.find();
@@ -156,7 +135,13 @@ io.on("connection", (socket) => {
   });
 });
 
-
-
-
+//Routers
+app.use("/api/products", productRouter);
+app.use("/api/carts", cartRouter);
+app.use("/realTimeProducts", socketRouter);
+app.use("/chatSocket", chatRouter);
+app.use("/mongoose/products", productDBRouter);
+app.use("/mongoose/carts", cartsDBRouter);
+app.use("/realTimeCarts", cartSocketRouter);
+app.use("/products", productsRouter)
 

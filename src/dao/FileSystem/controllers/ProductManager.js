@@ -1,6 +1,6 @@
-import {promises as fs} from 'fs'
+import { promises as fs } from "fs";
 
- class ProductManager {
+class ProductManager {
   constructor() {
     this.path = './src/dao/FileSystem/json/productos.json'
     this.products = []
@@ -34,7 +34,7 @@ getProducts = async () => {
     return response;
   }
 
-  getProductById = async (id) => {
+  getProductsById = async (id) => {
     let responseId = await this.readProducts()
     let product = responseId.find(product => product.id === id)
     return product || null;
