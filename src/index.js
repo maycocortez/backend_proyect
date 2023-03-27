@@ -1,32 +1,54 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import * as path from "path";
 import __dirname from "./utils.js";
 import { engine } from "express-handlebars";
-import productRouter from "./routes/productFileSystem.js";
-import cartRouter from "./routes/cartsFileSystem.js";
-import socketRouter from "./routes/socket.js";
-import chatRouter from "./routes/chat.js";
+import router from "./routes/routes.js";
 import { Server } from "socket.io";
-import { dateShort } from "./utils.js"; 
-import connectionMongoose from "./connection/mongoose.js"; 
-import productDBRouter from "./routes/productMongoose.js";
-import cartsDBRouter from "./routes/cartsMongoose.js";
-import cartSocketRouter from "./routes/cartsSocket.js";
-import productsRouter from "./routes/productsNew.js";
+import { dateShort } from "./utils.js";
+import connectionMongoose from "./connection/mongoose.js";
 import { chatModel } from "./dao/Mongoose/models/ChatSchema.js";
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import flash from "connect-flash";
+import MongoStore from "connect-mongo";
 
-
-
+//Creando Server Express
+const app = express();
 dotenv.config();
 
-const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(flash());
 
+const skipLog = (req, res) => {
+  let url = req.url;
+  if (url.indexOf("?") > 0) url = url.substr(0, url.indexOf("?"));
+  if (url.match(/(js|jpg|png|ico|css|woff|woff2|eot)$/gi)) {
+    return true;
+  }
+  return false;
+};
+app.use(morgan("dev", { skip: skipLog }));
+app.use(cookieParser());
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URL,
+      mongoOption: { useNewUrlParser: true, useUnifiedTopology: true },
+      ttl: 600,
+    }),
+    secret: process.env.sessionSecret || "1234567890",
+    resave: true,
+    rolling: true,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 10 },
+  })
+);
+//Handlebars
 app.engine(
   "handlebars",
   engine({
@@ -39,18 +61,21 @@ app.engine(
 app.set("view engine", "handlebars");
 app.set("views", path.resolve(__dirname + "/views"));
 
-
 app.use("/", express.static(__dirname + "/public"));
 
-export const PORT = 8000
+//Routers
+app.use("/", router);
 
+//Creando Loacal host 8080
+export const PORT = process.env.PORT || 8080;
 const server = app.listen(PORT, () =>
-  console.log(`Conexion por express ${server.address().port}`)
+  console.log(`Conectado al  host ${server.address().port}`)
 );
 server.on("error", (err) => {
-  console.log(`Error: ${err}`);
+  console.log(`Algo salio mal: ${err}`);
 });
 export const io = new Server(server);
+
 
 let time = dateShort();
 
@@ -134,14 +159,3 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("typing", data);
   });
 });
-
-//Routers
-app.use("/api/products", productRouter);
-app.use("/api/carts", cartRouter);
-app.use("/realTimeProducts", socketRouter);
-app.use("/chatSocket", chatRouter);
-app.use("/mongoose/products", productDBRouter);
-app.use("/mongoose/carts", cartsDBRouter);
-app.use("/realTimeCarts", cartSocketRouter);
-app.use("/products", productsRouter)
-

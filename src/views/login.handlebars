@@ -1,0 +1,59 @@
+<main class="mainLogin">
+  <div
+    {{#if signup}}
+      class="wrapper active"
+    {{else}} 
+      class="wrapper"
+    {{/if}}  id="wrapper">
+    <div class="title-text">
+      <div class="title login">Iniciar Sesion</div>
+      <div class="title signup">Registro</div>
+    </div>
+    <div class="form-container">
+      <div class="slide-controls">
+        <label for="login" id="slideLogin" class="slide login">Inicio sesion</label>
+        <label for="signup" id="slideSignup" class="slide signup">Registrarse</label>
+        <div class="slider-tab"></div>
+      </div>
+      <div class="form-inner">
+        <form id="formLogin" action="/api/session/login" method="post" class="login">
+          <div class="field">
+            <input type="text" name="email" placeholder="Email" value={{email}}>
+          </div>
+          <div class="field">
+            <input id="passwordLogin" type="password" name="password" placeholder="Contraseña"/>
+            <span class="eyeBtn" id="eyeBtn"></span>
+          </div>
+          
+          <div class="field btn">
+            <div class="btn-layer"></div>
+            <input type="submit" value="Aceptar"/>
+          </div>
+          <label for="login" class="messageError">{{messageLogin}}</label>
+          <label for="newUser" class="messageNewUser">{{messageNewUser}}</label>
+        </form>
+        <form id="formSignup" action="/api/session/register" method="post" class="signup">
+          <div class="field inputsSignup">
+            <input type="text" name="firstName" placeholder="Nombre" value={{firstName}}>
+            <input type="text" name="lastName" placeholder="Apellido"value={{lastName}}>
+          </div>
+          <div class="field inputsSignup">
+            <input class="ageSignup" name="age" type="text" placeholder="Edad"value={{age}}>
+            <input class="emailSignup" name="emailRegister" type="text" placeholder="Email"value={{emailRegister}}>
+          </div>
+          <div class="field inputsSignup">
+            <input type="password" id="passwordSignup1" name="password" placeholder="Contraseña" maxlength="10"/>
+            <input type="password" id="passwordSignup2" name="passwordConfirm" placeholder="Vuelve a escribir la contraseña" maxlength="10"/> 
+            <span class="eyeBtnSignup" id="eyeBtnSignup"></span>
+          </div>
+          <div class="field btn">
+            <div class="btn-layer"></div>
+            <input type="submit" value="Enviar" />
+          </div>
+        <label for="signup" class="messageError signupError">{{messageSignup}}</label>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+<script type="module" src="js/login.js"></script>

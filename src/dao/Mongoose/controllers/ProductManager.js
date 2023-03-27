@@ -5,6 +5,7 @@ class CrudMongoose {
   objectKeys(object) {
     if (
       !object.title ||
+      !object.author ||
       !object.description ||
       !object.price ||
       !object.status ||
@@ -18,8 +19,19 @@ class CrudMongoose {
     let products = await productModel.find();
     return products.find((prod) => prod.id === id);
   };
+  category = async () => {
+    let categorys = await productModel.find({});
+    let selectCategory = [];
+    for (let prodCategory of categorys) {
+      selectCategory.push(prodCategory.category);
+    }
+    let single = new Set(selectCategory);
+    let categorySingle = [...single].sort();
+    return categorySingle;
+  };
 
   findProducts = async (data) => {
+    let category = await this.category();
     if (data) {
       let category =
         data.category === undefined ? {} : { category: data.category };
@@ -38,6 +50,7 @@ class CrudMongoose {
           ...filter,
           prevLink: `http://localhost:${PORT}/products/${page - 1}`,
           nextlink: `http://localhost:${PORT}/products/${page + 1}`,
+          category,
         },
       ];
     } else {
@@ -48,7 +61,7 @@ class CrudMongoose {
         {
           limit,
           page,
-          sort: { price: "asc" }
+          sort: { price: "asc" },
         }
       );
       return [
@@ -56,35 +69,36 @@ class CrudMongoose {
           ...productsAll,
           prevLink: `http://localhost:${PORT}/products/${page - 1}`,
           nextlink: `http://localhost:${PORT}/products/${page + 1}`,
+          category,
         },
       ];
     }
   };
   findProductsById = async (id) => {
     let product = await this.exist(id);
-    if (!product) return "No se encontro el producto";
+    if (!product) return "Producto no Encontrado";
     return product;
   };
 
   createProducts = async (newProduct) => {
     if (this.objectKeys(newProduct) === 400)
-      return "Faltan datos";
+      return "JSON incompleto. Faltan 1 o mas Datos";
     await productModel.create(newProduct);
-    return "Producto agregado";
+    return "Producto Agregado Correctamente";
   };
 
   updateProducts = async (id, updateProduct) => {
     let product = await this.exist(id);
-    if (!product) return "No se encontro el producto";
+    if (!product) return "Producto no Encontrado";
     if (this.objectKeys(updateProduct) === 400)
-      return "Faltan datos";
+      return "JSON incompleto. Faltan 1 o mas Datos";
     await productModel.findByIdAndUpdate(id, updateProduct);
-    return "Producto modificado ";
+    return "Producto Modificado Correctamente";
   };
 
   deleteProductsById = async (id) => {
     let product = await this.exist(id);
-    if (!product) return "No se encontro el producto";
+    if (!product) return "Producto no Encontrado";
     let result = await productModel.findByIdAndDelete(id);
     return `Producto ${result.title} Eliminado`;
   };
