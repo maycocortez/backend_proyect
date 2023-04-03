@@ -14,6 +14,8 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import flash from "connect-flash";
 import MongoStore from "connect-mongo";
+import passport from "passport";
+import initializePassword from "./config/passport.js";
 
 //Creando Server Express
 const app = express();
@@ -48,6 +50,15 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 10 },
   })
 );
+
+//Passport
+initializePassword();
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
+
 //Handlebars
 app.engine(
   "handlebars",
@@ -66,7 +77,7 @@ app.use("/", express.static(__dirname + "/public"));
 //Routers
 app.use("/", router);
 
-//Creando Loacal host 8080
+//Creando localhost 
 export const PORT = process.env.PORT || 8080;
 const server = app.listen(PORT, () =>
   console.log(`Conectado al  host ${server.address().port}`)

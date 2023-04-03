@@ -7,14 +7,13 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-
 //__filename && __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default __dirname;
 
-//Multer
+//Muter
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, __dirname + "/public/img");
@@ -33,10 +32,7 @@ export const dateShort = () => {
 };
 
 //bcrypt
-export const createHash = (password) => 
-  bcrypt.hashSync(password, bcrypt.genSaltSync(12));
-;
-
-export const validatePassword = (passwordSend, passwordDB) => 
-  bcrypt.compareSync(passwordSend, passwordDB)
-;
+export const createHash = (password) =>
+  bcrypt.hashSync(password, bcrypt.genSaltSync(parseInt(process.env.salt)));
+export const validatePassword = (passwordSend, passwordDB) =>
+  bcrypt.compareSync(passwordSend, passwordDB);

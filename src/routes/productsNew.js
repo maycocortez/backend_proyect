@@ -27,17 +27,27 @@ const products = async (options) => {
 productsRouter
   .use("/", express.static(__dirname + "/public"))
   .get("/", async (req, res) => {
-    if (req.session.login) {
+    if (req.isAuthenticated()) {
       let data = await products();
-      let dataUser = await userModel.find({email: req.session.email})
-      res.render("home", { ...data, nameUser: `${dataUser[0].firstName} ${dataUser[0].lastName}` });
+      req.session.login = true
+      let dataUser = await userModel.findById(req.session.passport.user).exec();
+      res.render("home", {
+        ...data,
+        nameUser: `${dataUser.firstName} ${dataUser.lastName}`,
+        rol: dataUser.rol,
+      });
     } else {
       return res.status(200).redirect("/api/session");
     }
   })
   .get("/:page", async (req, res) => {
     let data = await products(req.params);
-    res.render("home", { ...data, email: req.session.email });
+    let dataUser = await userModel.findById(req.session.passport.user).exec();
+    res.render("home", {
+      ...data,
+      nameUser: `${dataUser.firstName} ${dataUser.lastName}`,
+      rol: dataUser.rol,
+    });
   });
 
 export default productsRouter;

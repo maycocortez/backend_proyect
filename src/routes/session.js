@@ -2,6 +2,7 @@ import { Router } from "express";
 import __dirname from "../utils.js";
 import express from "express";
 import SessionManager from "../dao/Mongoose/controllers/SessionManager.js";
+import passport from "passport";
 
 const sessionRouter = Router();
 const session = new SessionManager();
