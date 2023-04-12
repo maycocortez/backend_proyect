@@ -1,53 +1,55 @@
+
 import { Router } from "express";
 import CrudMongoose from "../dao/Mongoose/controllers/ProductManager.js";
 
+const productMongooseRouter = Router();
+const productsByMongoose = new CrudMongoose();
+import { isAdmin, isModerator } from "../middlewares/authRole.js";
 
-const productDBRouter = Router();
-const productDB = new CrudMongoose();
-
-productDBRouter.get("/", async (req, res) => {
+productMongooseRouter.get("/", async (req, res) => {
   try {
-    res.status(200).send(await productDB.findProducts());
+    res.status(200).send(await productsByMongoose.findProducts(req.query));
   } catch (err) {
     res.status(404).send("Error en la consulta", err);
-
   }
 });
-productDBRouter.get("/:id", async (req, res) => {
+productMongooseRouter.get("/:id", async (req, res) => {
   try {
     res
       .status(200)
-      .send(await productDB.findProductsById(req.params.id));
-  } catch (error) {
-    res.status(404).send("Not found", error);
+      .send(await productsByMongoose.findProductsById(req.params.id));
+  } catch (err) {
+    res.status(404).send("Not found", err);
   }
 });
-productDBRouter.post("/", async (req, res) => {
+productMongooseRouter.post("/",isModerator, async (req, res) => {
   try {
-    res.status(200).send(await productDB.createProducts(req.body));
-  } catch (error) {
-    res.status(400).send("Error", error);
+    res.status(200).send(await productsByMongoose.createProducts(req.body));
+  } catch (err) {
+    res.status(400).send("Error", err);
   }
 });
-productDBRouter.put("/:id", async (req, res) => {
+productMongooseRouter.put("/:id",isAdmin, async (req, res) => {
   try {
     res
       .status(200)
-      .send(await productDB.updateProducts(req.params.id, req.body));
-  } catch (error) {
-    res.status(400).send("Error", error);
+      .send(await productsByMongoose.updateProducts(req.params.id, req.body));
+  } catch (err) {
+    res.status(400).send("Error", err);
   }
 });
-productDBRouter.delete("/:id", async (req, res) => {
+productMongooseRouter.delete("/:id",isAdmin, async (req, res) => {
   console.log(req.params.id);
   try {
     res
       .status(200)
-      .send(await productDB.deleteProductsById(req.params.id));
+      .send(await productsByMongoose.deleteProductsById(req.params.id));
   } catch (err) {
     res.status(400).send("Error de sintaxis", err);
   }
 });
 
-export default productDBRouter;
+export default productMongooseRouter;
+
+
 

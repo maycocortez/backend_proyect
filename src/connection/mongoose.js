@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
-//Archivo ENV
 dotenv.config();
 
 const db = mongoose.connection;
@@ -15,7 +14,7 @@ const connectionMongoose = () => {
     .catch((err) => console.log(err));
 
   db.once("open", () => {
-    console.log("Database in connected to MongoDB");
+    console.log("Conectado a MongoDB");
   });
 
   db.on("error", (err) => {

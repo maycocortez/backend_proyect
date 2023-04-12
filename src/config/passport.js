@@ -1,62 +1,114 @@
-import dotenv from "dotenv";
 import local from "passport-local";
 import passport from "passport";
-import { userModel } from "../dao/Mongoose/models/UserSchema.js";
-import { createHash, validatePassword } from "../utils.js";
+import userModel from "../dao/Mongoose/models/UserSchema.js";
 import GitHubStrategy from "passport-github2";
+import jwt from "passport-jwt";
+import { roleModel } from "../dao/Mongoose/models/RoleSchema.js";
 
-dotenv.config();
 const LocarStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
 
 const initializePassword = () => {
-  passport.use(
-    "register",
-    new LocarStrategy(
-      { passReqToCallback: true, usernameField: "email" },
-      async (req, username, password, done) => {
-        try {
-          const { firstName, lastName, age, passwordConfirm } = req.body;
-          req.session.register = {
-            firstName,
-            lastName,
-            age,
-            emailRegister: username,
-          };
-          let user = await userModel.findOne({ email: username });
-          if (user) {
-            req.session.signup = true;
-            req.session.email = username;
-            req.session.messageErrorSignup = "Registered User. Log in..";
-            return done(null, false);
-          }
-          if (password != passwordConfirm) {
-            req.session.signup = true;
-            req.session.email = "";
-            req.session.messageErrorSignup =
-              "Password do not match, check again..";
-            return done(null, false);
-          }
-          let passHash = createHash(password);
-          let newUser = await userModel.create({
-            firstName: firstName,
-            lastName: lastName,
-            age: parseInt(age),
-            email: username,
-            password: passHash,
-          });
-          req.session.signup = false;
-          req.session.email = username;
-          req.session.messageNewUser = "You are registered. Log in..";
-          return done(null, newUser);
-        } catch (error) {
-          return done(error);
-        }
-      }
-    )
-  );
+  const cookieExtractor = (req) => {
+    const token = req.cookies ? req.cookies.jwtCookie : {};
+    return token;
+  };
 
-  passport.serializeUser((user, done) => {
-    done(null, user._id);
+  passport
+    .use(
+      "jwt",
+      new JWTStrategy(
+        {
+          jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+          secretOrKey: process.env.JWT_PRIVATE_KEY,
+        },
+        async (jwt_payload, done) => {
+          try {
+            return done(null, jwt_payload);
+          } catch (error) {
+            return done(error);
+          }
+        }
+      )
+    )
+    .use(
+      "register",
+      new LocarStrategy(
+        { passReqToCallback: true, usernameField: "email" },
+        async (req, username, password, done) => {
+          try {
+            const { firstName, lastName, age, passwordConfirm, roles } =
+              req.body;
+            req.session.register = {
+              firstName,
+              lastName,
+              age,
+              emailRegister: username,
+            };
+            let user = await userModel.findOne({ email: username });
+            //Comprobacion para saber si el usuario ya esta registrado
+            if (user) {
+              req.session.signup = true;
+              req.session.email = username;
+              req.session.messageErrorSignup = "El usuario ya esta registrado. Inicie sesion";
+              return done(null, false);
+            }
+
+            //Verificacion de password
+            if (password != passwordConfirm) {
+              req.session.signup = true;
+              req.session.email = "";
+              req.session.messageErrorSignup =
+                "La contraseña no coincide";
+              return done(null, false);
+            }
+
+            //Creacion de usuario
+            let newUser = {
+              firstName: firstName,
+              lastName: lastName,
+              age: parseInt(age),
+              email: username,
+              password: await userModel.encryptPassword(password),
+            };
+
+            //Asignamos un rol al usuario. Por defecto sera user
+            if (roles) {
+              const foundRoles = await roleModel.find({
+                name: { $in: roles },
+              });
+              newUser.roles = foundRoles.map((role) => role._id);
+            } else {
+              const role = await roleModel.findOne({ name: "user" });
+              newUser.roles = [role._id];
+            }
+
+            //Se le asigna un carrito al usuario
+            let newCart = await userModel.addCartToUser()
+            newUser.cart = newCart
+
+            //Gurdamos en la BDD
+            await userModel.create(newUser);
+
+            //Redireccion al login
+            req.session.signup = false;
+            req.session.email = username;
+            req.session.messageNewUser = "El usuario ya esta registrado. Inicie sesion";
+            return done(null, false);
+          } catch (error) {
+            return done(error);
+          }
+        }
+      )
+    );
+
+  passport.serializeUser(async (user, done) => {
+    if (Array.isArray(user)) {
+      done(null, user[0]._id);
+    } else {
+      done(null, user._id);
+    }
   });
 
   passport.deserializeUser(async (id, done) => {
@@ -70,21 +122,24 @@ const initializePassword = () => {
       new LocarStrategy(
         { passReqToCallback: true, usernameField: "email" },
         async (req, username, password, done) => {
-          console.log(req.session);
           try {
-            let user = await userModel.findOne({ email: username });
+            let user = await userModel
+              .findOne({ email: username })
+              .populate("roles");
             if (user == null) {
               req.session.signup = false;
-              req.session.messageErrorLogin = "Invalid email";
+              req.session.messageErrorLogin = "El email no es valido";
               return done(null, false);
             }
-            if (validatePassword(password, user.password)) {
+            if (await userModel.comparePassword(password, user.password)) {
+              //const token = await userModel.createToken(user);
+              //const accessToken = generateToken(user); Consultamos JWT pero no lo usamos por ahora
               return done(null, user);
             }
             req.session.signup = false;
             req.session.email = username;
             req.session.messageNewUser = "";
-            req.session.messageErrorLogin = "Incorrect password";
+            req.session.messageErrorLogin = "Contraseña incorrecta";
             return done(null, false);
           } catch (error) {
             return done(error);
@@ -99,7 +154,7 @@ const initializePassword = () => {
           clientID: process.env.CLIENT_ID,
           clientSecret: process.env.CLIENT_SECRET,
           scope: ["user:email"],
-          callbackURL: process.env.CALLBACK_URL,
+          calbackURL: process.env.CALLBACK_URLL,
           passReqToCallback: true,
         },
         async (req, accessToken, refreshToken, profile, done) => {
@@ -110,12 +165,14 @@ const initializePassword = () => {
             if (userGithub) {
               return done(null, userGithub);
             } else {
+              const role = await roleModel.findOne({ name: "user" });
               let newUser = await userModel.create({
                 firstName: profile._json.name,
-                lastName: "",
+                lastName: "", 
                 age: 18, 
                 email: profile.emails[0].value,
                 password: "", 
+                roles: [role._id],
               });
               return done(null, newUser);
             }
@@ -124,7 +181,8 @@ const initializePassword = () => {
           }
         }
       )
-    )
+    );
 };
 
 export default initializePassword;
+
