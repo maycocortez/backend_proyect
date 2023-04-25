@@ -1,206 +1,116 @@
-import { cartsModel } from "../models/CartsSchema.js";
-import { productModel } from "../models/ProductSchema.js";
+import { findProducts } from '../../../services/product.js'
+import * as cartService from '../../../services/cart.js'
 
 class CartMongooseManager {
-  existCarts = async (id) => {
-    let cartsAll = await cartsModel.find();
-    return cartsAll.find((cart) => cart.id === id);
-  };
-  existProduct = async (id) => {
-    let productsAll = await productModel.find();
-    return productsAll.find((product) => product.id === id);
-  };
+  existCarts = async id => {
+    const cartsAll = await cartService.findCarts()
+    return cartsAll.find(cart => cart.id === id)
+  }
+
+  existProduct = async id => {
+    const productsAll = await findProducts()
+    return productsAll.find(product => product.id === id)
+  }
 
   findCarts = async () => {
-    let carts = await cartsModel.find();
-    return carts;
-  };
-  findCartsById = async (id) => {
-    let cart = await this.existCarts(id);
-    if (!cart) return "Carrito no Encontrado";
-    return await cartsModel.findById(id).populate("products._id");
-  };
+    const carts = await cartService.findCarts()
+    return carts
+  }
+
+  findCartsById = async id => {
+    const cart = await this.existCarts(id)
+    if (!cart) return 'No se encontro el carrito'
+    return await cartService.findCartsById(id)
+  }
 
   createCarts = async () => {
-    await cartsModel.create({ products: [] });
-    return "Carrito Creado Correctamente";
-  };
+    await cartService.createCart()
+    return 'Carrito Creado Correctamente'
+  }
 
-  addProductToCart = async (id_cart, id_product) => {
-    let cart = await this.existCarts(id_cart);
-    if (!cart) return "Carrito no Encontrado";
+  addProductToCart = async (idCart, idProduct) => {
+    const cart = await this.existCarts(idCart)
+    if (!cart) return 'No se encontro el carrito'
 
-    let product = await this.existProduct(id_product);
-    if (!product) return "Producto no Encontrado";
+    const product = await this.existProduct(idProduct)
+    if (!product) return 'No se encontro el producto'
 
-    let productInCart = cart.products.some(
-      (product) => product.id === id_product
-    );
+    const productInCart = cart.products.some(
+      product => product.id === idProduct
+    )
     if (!productInCart) {
-      let addProduct = [{ _id: product.id, quantity: 1 }, ...cart.products];
-      await cartsModel.findByIdAndUpdate(id_cart, { products: addProduct });
-      return `Producto ${product.title} agregado al Carrito. Cantidad: 1`;
+      const addProduct = [{ _id: product.id, quantity: 1 }, ...cart.products]
+      await cartService.findCartByIdAndUpdate(idCart, { products: addProduct })
+      return `Producto ${product.title} agregado . Cantidad: 1`
     } else {
-      let indexProduct = cart.products.findIndex(
-        (product) => product.id === id_product
-      );
-      cart.products[indexProduct].quantity++;
-      let quantityProductInCart = cart.products[indexProduct].quantity;
-      await cartsModel.findByIdAndUpdate(id_cart, { products: cart.products });
-      return `Producto ${product.title} agregado al Carrito. Cantidad: ${quantityProductInCart}`;
+      const indexProduct = cart.products.findIndex(
+        product => product.id === idProduct
+      )
+      cart.products[indexProduct].quantity++
+      const quantityProductInCart = cart.products[indexProduct].quantity
+      await cartService.findCartByIdAndUpdate(idCart, {
+        products: cart.products
+      })
+      return `Producto ${product.title} agregado. Cantidad: ${quantityProductInCart}`
     }
-  };
+  }
 
-  updateProductToCart = async (id_cart, id_product, newQuantity) => {
-    let cart = await this.existCarts(id_cart);
-    if (!cart) return "Carrito no Encontrado";
+  updateProductToCart = async (idCart, idProduct, newQuantity) => {
+    const cart = await this.existCarts(idCart)
+    if (!cart) return 'No se encontro el carrito'
 
-    let productInCart = cart.products.some(
-      (product) => product.id === id_product
-    );
+    const productInCart = cart.products.some(
+      product => product.id === idProduct
+    )
     if (!productInCart) {
-      return "Producto no Encontrado";
+      return 'No se encontro el producto'
     } else {
-      let indexProduct = cart.products.findIndex(
-        (product) => product.id === id_product
-      );
-      cart.products[indexProduct].quantity = newQuantity;
-      await cartsModel.findByIdAndUpdate(id_cart, { products: cart.products });
-      return `Producto actualizado. Cantidad: ${newQuantity}`;
+      const indexProduct = cart.products.findIndex(
+        product => product.id === idProduct
+      )
+      cart.products[indexProduct].quantity = newQuantity
+      await cartService.findCartByIdAndUpdate(idCart, {
+        products: cart.products
+      })
+      return `Producto actualizado. Cantidad: ${newQuantity}`
     }
-  };
+  }
 
-  deleteCarts = async (id) => {
-    let cart = await this.existCarts(id);
-    if (!cart) return "Carrito no Encontrado";
-    await cartsModel.findByIdAndDelete(id);
-    return "Carrito Eliminado Exitosamente";
-  };
-  deleteProductToCart = async (id_cart, id_product) => {
-    let cart = await this.existCarts(id_cart);
-    if (!cart) return "Carrito no Encontrado";
+  deleteCarts = async id => {
+    const cart = await this.existCarts(id)
+    if (!cart) return 'No se encontro el carrito'
+    await cartService.findCartByIdAndDelete(id)
+    return 'Se elimino el carrito'
+  }
 
-    let productInCart = cart.products.some(
-      (product) => product.id === id_product
-    );
+  deleteProductToCart = async (idCart, idProduct) => {
+    const cart = await this.existCarts(idCart)
+    if (!cart) return 'No se encontro el carrito'
+
+    const productInCart = cart.products.some(
+      product => product.id === idProduct
+    )
     if (!productInCart) {
-      return "Producto no Encontrado";
+      return 'No se encontro el producto'
     } else {
-      let productsUpdate = cart.products.filter(
-        (product) => product.id != id_product
-      );
-      await cartsModel.findByIdAndUpdate(id_cart, { products: productsUpdate });
-      return `Producto eliminado del Carrito.`;
+      const productsUpdate = cart.products.filter(
+        product => product.id !== idProduct
+      )
+      await cartService.findCartByIdAndUpdate(idCart, {
+        products: productsUpdate
+      })
+      return 'Producto eliminado.'
     }
-  };
-  emptycart = async (id) => {
-    let cart = await this.existCarts(id);
-    if (!cart) return "Carrito no Encontrado";
-    await cartsModel.findByIdAndUpdate(id, { products: [] });
-    return "Carrito Vaciado Exitosamente";
-  };
+  }
+
+  emptycart = async id => {
+    const cart = await this.existCarts(id)
+    if (!cart) return 'No se encontro el carrito'
+    await cartService.findCartByIdAndUpdate(id, { products: [] })
+    return 'Carrito vaciado'
+  }
 }
 
-export default CartMongooseManager;
+export default CartMongooseManager
 
 
-
-
-/*import { cartsModel } from "../models/CartsSchema.js";
-import { productModel } from "../models/ProductSchema.js";
-
-class CartMongooseManager {
-  existCarts = async (id) => {
-    let cartsAll = await cartsModel.find();
-    return cartsAll.find((cart) => cart.id === id);
-  };
-  existProduct = async (id) => {
-    let productsAll = await productModel.find();
-    return productsAll.find((product) => product.id === id);
-  };
-
-  findCarts = async () => {
-    let carts = await cartsModel.find();
-    return carts;
-  };
-  findCartsById = async (id) => {
-    let cart = await this.existCarts(id);
-    if (!cart) return "No se encontro el carrito";
-    return await cartsModel.findById(id).populate("products._id");
-  };
-
-  createCarts = async () => {
-    await cartsModel.create({ products: [] });
-    return "Creado satisfactoriamente";
-  };
-
-  addProductToCart = async (id_cart, id_product) => {
-    let cart = await this.existCarts(id_cart);
-    if (!cart) return "No se encontro el carrito";
-
-    let product = await this.existProduct(id_product);
-    if (!product) return "No se encontro el producto";
-
-    let productInCart = cart.products.some(
-      (product) => product.id === id_product
-    );
-    if (!productInCart) {
-      let addProduct = [{ _id: product.id, quantity: 1 }, ...cart.products];
-      await cartsModel.findByIdAndUpdate(id_cart, { products: addProduct });
-      return `Producto " ${product.title} " agregado al carrito satisfactoriamente. Cantidad: 1`;
-    } else {
-      let indexProduct = cart.products.findIndex(
-        (product) => product.id === id_product
-      );
-      cart.products[indexProduct].quantity++;
-      let quantityProductInCart = cart.products[indexProduct].quantity;
-      await cartsModel.findByIdAndUpdate(id_cart, { products: cart.products });
-      return `Producto " ${product.title} " agregado al carrito starisfactoriamente. Cantidad: ${quantityProductInCart}`;
-    }
-  };
-
-  updateProductToCart = async (id_cart, id_product, newQuantity) => {
-    let cart = await this.existCarts(id_cart);
-    if (!cart) return "No se encontro el carrito";
-
-    let productInCart = cart.products.some(
-      (product) => product.id === id_product
-    );
-    if (!productInCart) {
-      return "No se encontro el producto";
-    } else {
-      let indexProduct = cart.products.findIndex(
-        (product) => product.id === id_product
-      );
-      cart.products[indexProduct].quantity = newQuantity;
-      await cartsModel.findByIdAndUpdate(id_cart, { products: cart.products });
-      return `Producto actualizado. Cantidad: ${newQuantity}`;
-    }
-  };
-
-  deleteCarts = async (id) => {
-    let cart = await this.existCarts(id);
-    if (!cart) return "No se encontro el carrito";
-    await cartsModel.findByIdAndDelete(id);
-    return "Eliminado satisfactoriamente";
-  };
-  deleteProductToCart = async (id_cart, id_product) => {
-    let cart = await this.existCarts(id_cart);
-    if (!cart) return "No se encontro el carrito";
-
-    let productInCart = cart.products.some(
-      (product) => product.id === id_product
-    );
-    if (!productInCart) {
-      return "No se encontro el producto";
-    } else {
-      let productsUpdate = cart.products.filter(
-        (product) => product.id != id_product
-      );
-      await cartsModel.findByIdAndUpdate(id_cart, { products: productsUpdate });
-      return `Se elimino el producto del carrito`;
-    }
-  };
-}
-
-export default CartMongooseManager; */

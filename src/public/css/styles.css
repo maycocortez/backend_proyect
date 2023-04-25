@@ -23,10 +23,7 @@ p {
   margin: 0 !important;
 }
 
-@font-face {
-  font-family: Pablo;
-  src: url("../font/TheScientist-L3EyW.ttf") format("truetype");
-}
+
 * {
   margin: 0;
   padding: 0;
@@ -57,24 +54,16 @@ p {
   left: 0;
   right: 0;
   z-index: 99;
-  background: rgba(0, 0, 0, 0.555);
   transition: 0.5s;
 }
 .nav .navContainer {
   min-width: 100%;
   margin: 0 auto;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 5px 20px;
 }
-.nav .navContainer .logo {
-  display: flex;
-  align-items: center;
-}
-.nav .navContainer .logo img {
-  width: 50px;
-}
+
 .nav .navContainer .menu {
   display: none;
   align-items: center;
@@ -82,7 +71,7 @@ p {
   margin: 0 -10px;
 }
 .nav .navContainer .menu a {
-  color: #fff;
+  color: black;
   text-decoration: none;
   margin: 0 10px;
   position: relative;
@@ -106,7 +95,7 @@ p {
   transition: all 300ms ease-out;
 }
 .nav .navContainer .menu a .shop-nav:hover {
-  color: #88c043;
+  color: grey;
 }
 .nav .navContainer .menu a .cant-carrito-total {
   opacity: 0;
@@ -116,8 +105,7 @@ p {
   width: 17px;
   height: 17px;
   border-radius: 50% 50%;
-  background-color: #88c043;
-  color: #ffffff;
+  background-color: black;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -655,7 +643,7 @@ p {
   min-width: 450px;
 }
 .contentTable thead tr {
-  background-color: #88c043;
+  background-color: black;
   color: #ffffff;
   text-align: left;
   padding: 12px 15px;
@@ -746,7 +734,7 @@ p {
 }
 .containerCards .cardContainer .priceCard {
   position: absolute;
-  background-color: #88c043;
+  background-color: black;
   padding: 0px 10px;
   top: 5px;
   left: 0;
@@ -758,7 +746,7 @@ p {
   content: "";
   border-style: solid;
   border-width: 12px 0px 0px 12px;
-  border-color: transparent transparent transparent #88c043;
+  border-color: transparent transparent transparent black;
   position: absolute;
   bottom: 0;
   right: -12px;
@@ -768,7 +756,7 @@ p {
   content: "";
   border-style: solid;
   border-width: 12px 12px 0px 12px;
-  border-color: #88c043 transparent transparent;
+  border-color: black transparent transparent;
   position: absolute;
   top: 0;
   right: -12px;
@@ -813,7 +801,7 @@ p {
   transition-delay: 0.3s;
 }
 .containerCards .cardContainer .btnContainer .btnCard:hover .icon {
-  color: #88c043;
+  color: black;
 }
 .containerCards .cardContainer .btnContainer .btnCard:hover .iconTooltip {
   opacity: 1;
@@ -831,7 +819,7 @@ p {
   top: 50%;
   right: 100%;
   transform: translateY(-50%);
-  background-color: #88c043;
+  background-color: black;
   color: #ffffff;
   font-size: 0.6rem;
   text-transform: capitalize;
@@ -848,10 +836,9 @@ p {
   transform: translateY(-50%);
   border-width: 6px;
   border-style: solid;
-  border-color: transparent transparent transparent #88c043;
+  border-color: transparent transparent transparent black;
 }
 .containerCards .cardContainer .descriptionCard {
-  position: absolute;
   bottom: -50px;
   width: 100%;
   padding: 0px 10px;
@@ -859,7 +846,6 @@ p {
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  opacity: 0;
   transition: 0.5s ease-in-out;
 }
 .containerCards .cardContainer .descriptionCard .authorStock {
@@ -876,219 +862,7 @@ p {
   gap: 5px;
 }
 
-.chatSocket {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 50px;
-}
 
-.wahtsapp_chat_container {
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 12px 24px 0px;
-  display: flex;
-  flex-direction: column;
-  width: 500px;
-  border-radius: 10px;
-  overflow: hidden;
-  background-color: #ffffff;
-}
-.wahtsapp_chat_container .wahtsapp_chat_title {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: #128c7e;
-  padding: 14px 20px;
-}
-.wahtsapp_chat_container .wahtsapp_chat_title .title_img {
-  width: 60px;
-  height: 60px;
-  position: relative;
-}
-.wahtsapp_chat_container .wahtsapp_chat_title .title_img::before {
-  content: "";
-  width: 10px;
-  height: 10px;
-  background-color: #4ad504;
-  border-radius: 50%;
-  border: 2px solid #128c7e;
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-}
-.wahtsapp_chat_container .wahtsapp_chat_title .title_img img {
-  width: 100%;
-}
-.wahtsapp_chat_container .wahtsapp_chat_title .title_text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  margin-left: 16px;
-}
-.wahtsapp_chat_container .wahtsapp_chat_title .title_text .title_text_name {
-  font-size: 1rem;
-  color: #ffffff;
-}
-.wahtsapp_chat_container .wahtsapp_chat_title .title_text .title_text_subname {
-  font-size: 0.8rem;
-  color: #ffffff;
-}
-.wahtsapp_chat_container .wahtsapp_chat {
-  width: 100%;
-  padding: 10px 8px;
-  background-color: #ece5dd;
-  position: relative;
-  height: 350px;
-  background-image: url("/img/fondo.png");
-  background-position: center center;
-  background-size: cover;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat {
-  width: 100%;
-  height: 280px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px 12px;
-  overflow-y: scroll;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .chat_container {
-  width: 340px;
-  padding: 7px 14px 6px;
-  background-color: #ffffff;
-  border-radius: 0px 8px 8px;
-  box-shadow: rgba(0, 0, 0, 0.13) 0px 1px 0.5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  position: relative;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .chat_container:before {
-  content: "";
-  position: absolute;
-  background-image: url("/img/chat.png");
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  background-size: contain;
-  top: 0px;
-  left: -12px;
-  width: 12px;
-  height: 19px;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .myMsg {
-  align-self: flex-end;
-  background-color: #dcf8c6;
-  border-radius: 8px 0px 8px 8px;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .myMsg:before {
-  background-image: url("/img/chat2.png");
-  left: 100%;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .moreMsg {
-  border-radius: 8px;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .moreMsg:before {
-  background-image: none;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .moreMsg .chat_title {
-  display: none;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .connection {
-  flex-direction: row;
-  align-self: center;
-  align-items: center;
-  gap: 5px;
-  background-color: #ccdceb;
-  border-radius: 8px;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .connection:before {
-  background-image: none;
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .connection .chat_title {
-  font-size: 0.8rem;
-  font-style: italic;
-  font-weight: 700;
-  color: rgba(0, 0, 0, 0.4);
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .connection .chat_txt {
-  font-size: 0.8rem;
-  font-style: italic;
-  margin-top: 0;
-  color: rgba(0, 0, 0, 0.4);
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .connection .chat_hs {
-  align-self: center;
-  font-style: italic;
-  text-align: center;
-  margin: 0;
-  font-size: 0.8rem;
-  color: rgba(0, 0, 0, 0.4);
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .chat_title {
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 18px;
-  color: rgba(0, 0, 0, 0.4);
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .chat_txt {
-  font-size: 14px;
-  line-height: 19px;
-  margin-top: 4px;
-  color: rgb(17, 17, 17);
-}
-.wahtsapp_chat_container .wahtsapp_chat .massajesChat .chat_hs {
-  align-self: flex-end;
-  text-align: right;
-  margin-top: -5px;
-  font-size: 12px;
-  line-height: 16px;
-  color: rgba(17, 17, 17, 0.5);
-  margin-right: -8px;
-  margin-bottom: -4px;
-}
-.wahtsapp_chat_container .wahtsapp_chat .imputChat {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  bottom: 10px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-.wahtsapp_chat_container .wahtsapp_chat .imputChat .chatBox {
-  all: unset;
-  resize: none;
-  min-width: 420px;
-  max-width: 420px;
-  padding: 5px 10px;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 14px 0px;
-  font-size: 0.8rem;
-}
-.wahtsapp_chat_container .wahtsapp_chat .imputChat .chatSend {
-  all: unset;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background-color: #25d366;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 14px 0px;
-  cursor: pointer;
-}
-.wahtsapp_chat_container .wahtsapp_chat .imputChat .chatSend ion-icon {
-  font-size: 1.2rem;
-  color: #ffffff;
-}
-.wahtsapp_chat_container .wahtsapp_chat .imputChat .chatSend:hover {
-  transform: scale(0.97);
-}
 
 .userConnection {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 12px 24px 0px;
@@ -1120,7 +894,7 @@ p {
   margin-left: 2px;
 }
 .userConnection .usersConnection .myUser {
-  color: #25d366;
+  color: black;
 }
 
 .mainLogin {
@@ -1192,7 +966,7 @@ p {
   left: 0;
   z-index: 0;
   border-radius: 5px;
-  background: -webkit-linear-gradient(left, #88c043, #6d9a36);
+  background: black;
   transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
@@ -1236,7 +1010,7 @@ p {
 }
 
 .form-inner form .field input:focus {
-  border-color: #64d569;
+  border-color: black
 }
 
 .form-inner form .field input::placeholder {
@@ -1309,7 +1083,7 @@ form .field input:focus::placeholder {
 
 .form-inner form .pass-link a,
 .form-inner form .signup-link a {
-  color: #28922d;
+  color: black;
   text-decoration: none;
 }
 
@@ -1324,12 +1098,12 @@ form .field input:focus::placeholder {
   top: 0;
   left: 0;
   font-size: 0.8rem;
-  color: #ff0000;
+  color: black;
   transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .messageNewUser {
-  color: #88c043;
+  color: black;
 }
 
 .signupError {
@@ -1350,7 +1124,7 @@ form .btn .btn-layer {
   width: 300%;
   position: absolute;
   left: -100%;
-  background: -webkit-linear-gradient(right, #88c043, #6d9a36, #88c043, #6d9a36);
+  background: black;
   border-radius: 5px;
   transition: all 0.4s ease;
 }
@@ -1438,137 +1212,9 @@ form .btn input[type=submit] {
   align-items: center;
   z-index: 99;
 }
-.navigation .menuToggle {
-  position: relative;
-  width: 70px;
-  height: 70px;
-  background: #000000;
-  border-radius: 70px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 1px 15px 25px rgba(136, 192, 67, 0.15);
-  cursor: pointer;
-  transition: 1s;
-}
-.navigation .userIcon {
-  content: "+";
-  position: absolute;
-  font-size: 2rem;
-  font-weight: 200;
-  color: rgb(136, 192, 67);
-  transition: 1s;
-}
-.navigation .emailUser {
-  position: absolute;
-  transform: translate(-20px, -2px);
-  color: #e0e0e0;
-  opacity: 0;
-  visibility: hidden;
-  transition: 0.3s ease-in-out;
-  transition-delay: 0s;
-}
-.navigation .active {
-  width: 300px;
-}
-.navigation .active .userIcon {
-  transform: translateX(-110px) rotate(360deg);
-}
-.navigation .active .emailUser {
-  transform: translate(10px, -2px);
-  opacity: 1;
-  visibility: visible;
-  transition-delay: 0.75s;
-}
-.navigation .menu {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  background: #000000;
-  border-radius: 70px;
-  z-index: -1;
-  transition: transform 0.5s, width 0.5s, height 0.5s;
-  transition-delay: 1s, 0.5s, 0.5s;
-  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
-  display: flex;
-}
-.navigation .menu::before {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  left: calc(50% - 8px);
-  top: 4px;
-  transform: rotate(45deg);
-  background: #000000;
-  border-radius: 2px;
-  transition: 0.5s;
-}
-.navigation .menu ul {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80px;
-  gap: 40px;
-}
-.navigation .menu ul li {
-  list-style: none;
-  cursor: pointer;
-  opacity: 0;
-  visibility: hidden;
-  transition: 0.25s;
-  transition-delay: calc(0s + var(--i));
-  transform: translateY(30px);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.navigation .menu ul li a {
-  display: block;
-  font-size: 2em;
-  text-decoration: none;
-  color: #e0e0e0;
-}
-.navigation .menu ul li a:hover {
-  color: #88c043;
-}
-.navigation .menu ul li a:hover ~ span {
-  opacity: 1;
-  visibility: visible;
-  bottom: -3px;
-  color: #e0e0e0;
-}
-.navigation .menu ul li span {
-  font-size: 0.5rem;
-  position: absolute;
-  bottom: -15px;
-  opacity: 0;
-  visibility: hidden;
-  transition: 0.3s ease-in-out;
-}
-.navigation .active ~ .menu {
-  width: 240px;
-  height: 70px;
-  z-index: 1;
-  transform: translateY(100px);
-  transition-delay: 0s, 0.5s, 0.5s;
-  box-shadow: 1px 15px 25px rgba(136, 192, 67, 0.15);
-}
-.navigation .active ~ .menu::before {
-  transition-delay: 0.5s;
-  top: -6px;
-}
-.navigation .active ~ .menu ul li {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0px);
-  transition-delay: calc(0.75s + var(--i));
-}
 
-.main404 {
+
+.div404 {
   width: 100%;
   height: 100vh;
   display: flex;
@@ -1577,30 +1223,14 @@ form .btn input[type=submit] {
   align-items: center;
   gap: 10px;
 }
-.main404 .gif {
-  background-image: url("https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif");
-  background-position: center;
-  background-size: cover, contain;
-  height: 300px;
-  width: 550px;
-  position: relative;
-  margin-bottom: 40px;
-}
-.main404 .gif .errorNumber {
-  position: absolute;
-  bottom: -55px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 5rem;
-  font-weight: bold;
-}
-.main404 .errorMessage {
+
+.div404 .errorMessage {
   text-align: center;
 }
-.main404 .box__button {
+.div404 .box__button {
   display: block;
   position: relative;
-  background: #88c043;
+  background: black;
   border: 1px solid transparent;
   border-radius: 50px;
   height: 50px;
@@ -1611,31 +1241,9 @@ form .btn input[type=submit] {
   font-size: 1.2rem;
   padding: 0 30px;
   white-space: nowrap;
-  transition: background 0.5s ease;
-  overflow: hidden;
-  mask-image: -webkit-radial-gradient(white, black);
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
+
 }
-.main404 .box__button:before {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 100px;
-  background: #ffffff;
-  bottom: -25px;
-  left: 0;
-  border: 2px solid #ffffff;
-  transform: translateX(-50px) rotate(45deg);
-  transition: transform 0.5s ease;
-}
-.main404 .box__button:hover {
-  background: transparent;
-  border-color: #88c043;
-  color: #88c043;
-}
-.main404 .box__button:hover::before {
-  transform: translateX(250px) rotate(45deg);
-}
+
 
 :root {
   --hue: 223;
@@ -1645,24 +1253,7 @@ form .btn input[type=submit] {
   --trans-dur: 0.3s;
 }
 
-.preloader {
-  text-align: center;
-  max-width: 20em;
-  width: 100%;
-}
 
-.preloader__text {
-  position: relative;
-  height: 1.5em;
-}
-
-.preloader__msg {
-  animation: msg 6s linear forwards infinite;
-  position: absolute;
-  width: 100%;
-  visibility: hidden;
-  opacity: 0;
-}
 
 .cart {
   display: block;
@@ -1708,16 +1299,7 @@ form .btn input[type=submit] {
   transition: stroke var(--trans-dur);
 }
 
-/* Dark theme */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: hsl(var(--hue), 10%, 10%);
-    --fg: hsl(var(--hue), 10%, 90%);
-  }
-  .cart__track {
-    stroke: hsla(var(--hue), 10%, 90%, 0.1);
-  }
-}
+
 /* Animations */
 @keyframes msg {
   from {

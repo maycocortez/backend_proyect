@@ -2,9 +2,8 @@ const cartsTableContent = document.getElementById("cartsTableContent");
 const itemId = document.getElementById("itemId");
 const itemQuantity = document.getElementById("itemQuantity");
 const socket = io();
-socket.emit("messaje", "Conectado con el Cliente por Sockets");
+socket.emit("messaje", "Conectado por websockets");
 
-//Consultar Carrito & Producto
 const formGetCart = document.getElementById("formGetCart");
 const resGetCart = document.getElementById("resGetCart");
 
@@ -40,7 +39,6 @@ socket.on("getCart", (data) => {
   }
 });
 
-//Agregar Carrito
 const formPostCart = document.getElementById("formPostCart");
 const resAddCart = document.getElementById("resAddCart");
 
@@ -63,7 +61,6 @@ socket.on("addCart", (data) => {
   });
 });
 
-//Agregar Producto en Carrito
 const formProdInCart = document.getElementById("formProdInCart");
 const resProdInCart = document.getElementById("resProdInCart");
 
@@ -92,7 +89,6 @@ socket.on("productInCart", (data) => {
   });
 });
 
-//Eliminar Carrito
 const formDeleteCart = document.getElementById("formDeleteCart");
 const resDeleteCart = document.getElementById("resDeleteCart");
 

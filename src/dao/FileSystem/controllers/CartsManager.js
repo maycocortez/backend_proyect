@@ -14,7 +14,7 @@ class CartManager {
             let allCarts = await fs.readFile(this.path, "utf-8");
             return JSON.parse(allCarts);
           } catch (error) {
-            console.error(`Error al leer el archivo carrito.txt: ${error}`);
+            console.error(`Error: ${error}`);
             return [];
           }
         };

@@ -61,9 +61,8 @@ const closeCarrito = document.getElementById("close-carrito");
 const alertVacio = () => {
   Swal.fire({
     icon: "error",
-    title: "Oops...",
-    text: "El Carrito esta Vacio!",
-    footer: "Vamos a llenar esa Bodega..!!",
+    title: "Error",
+    text: "No hay productos en el carrito",
   });
 };
 

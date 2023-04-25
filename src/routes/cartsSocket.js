@@ -9,10 +9,10 @@ cartSocketRouter.get("/", async (req, res) => {
   io.on("connection", (socket) => {
     socket.on("messaje", (data) => {
       console.log(data);
-      //Mensaje del Servidor
-      io.sockets.emit("estado", "Conectado con el Servidor por Sockets");
+      io.sockets.emit("estado", "Conexion por websockets");
     });
-    //Consultamos Carritos y Productos en Carrito por ID
+
+    
     socket.on("getCart", async (data) => {
       let byIdCart = await cartsByMongoose.findCartsById(data);
       if (data === "") {
@@ -88,7 +88,6 @@ cartSocketRouter.get("/", async (req, res) => {
     });
   });
 
-  //Render por defecto
   res.render("realTimeCarts", {
     title: "MnogoDB | Websockets",
   });

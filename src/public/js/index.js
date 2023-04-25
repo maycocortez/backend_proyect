@@ -1,6 +1,6 @@
 const itemTableContent = document.getElementById("itemTableContent");
 const socket = io();
-socket.emit("messaje", "Conectado con el Cliente por Sockets");
+socket.emit("messaje", "Conectado por websockets");
 
 socket.on("estado", (data) => {
   console.log(data);
@@ -11,7 +11,6 @@ const cargarDom = (prod) => {
   <tr>
   <td>${prod.id}</td>
   <td class="itemLeft">${prod.title}</td>
-  <td class="itemLeft">${prod.author}</td>
   <td class="itemLeft">${prod.description}</td>
   <td>${prod.price}</td>
   <td>${prod.status}</td>
@@ -24,7 +23,6 @@ const cargarDom = (prod) => {
   `;
 };
 
-//Consultar Producto
 const formGet = document.getElementById("formGet");
 const resGet = document.getElementById("resGet");
 
@@ -43,7 +41,6 @@ socket.on("getProduct", (data) => {
   });
 });
 
-//Agregar Producto
 const formPost = document.getElementById("formPost");
 const resAdd = document.getElementById("resAdd");
 
@@ -62,7 +59,6 @@ socket.on("addProduct", (data) => {
   });
 });
 
-//Actualizar Producto
 const formPut = document.getElementById("formPut");
 const resPut = document.getElementById("resPut");
 
@@ -85,7 +81,6 @@ socket.on("putProduct", (data) => {
   });
 });
 
-//Eliminar por ID
 const formDelete = document.getElementById("formDelete");
 const resDelete = document.getElementById("resDelete");
 

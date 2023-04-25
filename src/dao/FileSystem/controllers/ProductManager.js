@@ -57,7 +57,7 @@ getProducts = async () => {
       ...productUpdate
     ]
     await fs.writeFile(this.path, JSON.stringify(updateProd))
-    console.log("Producto Actualizado")
+    console.log("Actualizado")
   } }
 
 

@@ -6,16 +6,12 @@ const socketRouter = Router();
 const productAll = new ProductManager();
 
 socketRouter.get("/", async (req, res) => {
-  //Websockets
-  //Recibimos peticion de coneccion Cliente
   io.on("connection", (socket) => {
     socket.on("messaje", (data) => {
       console.log(data);
-      //Mensaje del Servidor
       io.sockets.emit("estado", "Conectado con el Servidor por Sockets");
     });
 
-    //Recivimos peticion de Consultar producto del cliente
     socket.on("getProduct", async (data) => {
       let byIdProducts = await productAll.getProductsById(data);
       if (data === "") {
@@ -36,7 +32,6 @@ socketRouter.get("/", async (req, res) => {
       }
     });
 
-    //Recivimos peticion de Agergar producto del cliente
     socket.on("addProduct", async (data) => {
       let addProduct = await productAll.addProduct(JSON.parse(data));
       io.sockets.emit("addProduct", {
@@ -45,7 +40,6 @@ socketRouter.get("/", async (req, res) => {
       });
     });
 
-    //Recibimos peticion de Actualizar producto
     socket.on("putProduct", async (data) => {
       let updateProduct = await productAll.updateProduct(
         data.id,
@@ -57,7 +51,7 @@ socketRouter.get("/", async (req, res) => {
       });
     });
 
-    //Recibimos peticion de Eliminar producto
+   
     socket.on("deleteProduct", async (data) => {
       let deleteProduct = await productAll.deleteProducts(data);
       io.sockets.emit("deleteProduct", {
@@ -67,10 +61,10 @@ socketRouter.get("/", async (req, res) => {
     });
   });
 
-  //Render por defecto
+
   let products = await productAll.readProducts();
   res.render("realTimeProducts", {
-    title: "Express | Websockets",
+    title: "Prueba con express",
     products,
   });
 });

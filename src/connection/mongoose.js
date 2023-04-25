@@ -14,7 +14,7 @@ const connectionMongoose = () => {
     .catch((err) => console.log(err));
 
   db.once("open", () => {
-    console.log("Conectado a MongoDB");
+    console.log("Conexion a MongoDB exitosa");
   });
 
   db.on("error", (err) => {

@@ -1,50 +1,49 @@
-const menuToggle = document.querySelector(".menuToggle");
-const addToCart = document.querySelectorAll(".addToCart");
-const socket = io();
+const menuToggle = document.querySelector('.menuToggle')
+const addToCart = document.querySelectorAll('.addToCart')
+const socket = io()
 
-menuToggle.addEventListener("click", () => {
-  menuToggle.classList.toggle("active");
-});
+menuToggle.addEventListener('click', () => {
+  menuToggle.classList.toggle('active')
+})
 
 for (let i = 0; i < addToCart.length; i++) {
-  addToCart[i].addEventListener("click", (e) => {
-    let idProduct = addToCart[i].getAttribute("data-id");
-    socket.emit("addProductToCart", idProduct);
+  addToCart[i].addEventListener('click', e => {
+    const idProduct = addToCart[i].getAttribute('data-id')
+    socket.emit('addProductToCart', idProduct)
     Toastify({
-      text: "Product in Cart",
-      className: "info",
+      text: 'Producto agregado!',
+      className: 'info',
       style: {
-        background: "linear-gradient(to right, #88c043, #6d9a36)",
+        background: 'linear-gradient(to right,#000000)'
       },
       offset: {
         x: 0,
-        y: 55,
-      },
-    }).showToast();
-  });
+        y: 55
+      }
+    }).showToast()
+  })
 }
 
-//Agrega productos al carrito
-const cardPrevius = document.getElementById("cardPrevius");
-const totalCart = document.getElementById("totalCart");
-const cartDelete = document.querySelectorAll(".cartDelete");
-const vaciarcarrito = document.getElementById("vaciar-carrito");
-const sectionTotal = document.getElementById("sectionTotal");
-const sectionButtons = document.getElementById("sectionButtons");
-const popupCartXs = document.getElementById("popupCartXs");
-const popupCart = document.getElementById("popupCart");
-
+const cardPrevius = document.getElementById('cardPrevius')
+const totalCart = document.getElementById('totalCart')
+const cartDelete = document.querySelectorAll('.cartDelete')
+const vaciarcarrito = document.getElementById('vaciar-carrito')
+const sectionTotal = document.getElementById('sectionTotal')
+const sectionButtons = document.getElementById('sectionButtons')
+const popupCartXs = document.getElementById('popupCartXs')
+const popupCart = document.getElementById('popupCart')
 
 if (cartDelete) {
   for (let i = 0; i < cartDelete.length; i++) {
-    cartDelete[i].addEventListener("click", (e) => {
-      let idProduct = cartDelete[i].getAttribute("data-id");
-      socket.emit("deleteProductToCart", idProduct);
-    });
+    cartDelete[i].addEventListener('click', e => {
+      const idProduct = cartDelete[i].getAttribute('data-id')
+      socket.emit('deleteProductToCart', idProduct)
+      cartDelete[i].classList.add('clicked')
+    })
   }
 }
 
-const updatecart = (data) => {
+const updatecart = data => {
   cardPrevius.innerHTML += `
   <li class="cardPreviusItems">
     <div class="img-info">
@@ -52,12 +51,18 @@ const updatecart = (data) => {
     <div class="infoPrevius">
      <p class="infoTitle">${data.title}</p>
      <p class="infoCant"><strong>${data.quantity} </strong>x<strong> ${data.price}</strong></p>
- 
+      <div class="infoFin">
+        
+      </div>
     </div>
     </div>
       <div class="delete-price">
       <div class="cartDelete" id="cartDelete" data-id=${data.id}>
-        <ion-icon name="trash-outline"></ion-icon>
+      <span class="icon">
+        <span class="lid"></span>
+        <span class="can"></span>
+        <span class="trash"></span>
+      </span>
       </div>
       <div class="price-conten">
         <p>$</p>
@@ -65,94 +70,79 @@ const updatecart = (data) => {
       </div>
     </div>
   </li>
-  `;
-};
+  `
+}
 const emptyCart = () => {
   cardPrevius.innerHTML += `
-  <div class="preloader">
-    <svg class="cart" role="img" aria-label="Shopping cart line animation" viewBox="0 0 128 128" width="128px" height="128px" xmlns="http://www.w3.org/2000/svg">
-      <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="8">
-        <g class="cart__track" stroke="hsla(0,10%,10%,0.1)">
-          <polyline points="4,4 21,4 26,22 124,22 112,64 35,64 39,80 106,80" />
-          <circle cx="43" cy="111" r="13" />
-          <circle cx="102" cy="111" r="13" />
-        </g>
-        <g class="cart__lines" stroke="currentColor">
-          <polyline class="cart__top" points="4,4 21,4 26,22 124,22 112,64 35,64 39,80 106,80" stroke-dasharray="338 338" stroke-dashoffset="-338" />
-          <g class="cart__wheel1" transform="rotate(-90,43,111)">
-            <circle class="cart__wheel-stroke" cx="43" cy="111" r="13" stroke-dasharray="81.68 81.68" stroke-dashoffset="81.68" />
-          </g>
-          <g class="cart__wheel2" transform="rotate(90,102,111)">
-            <circle class="cart__wheel-stroke" cx="102" cy="111" r="13" stroke-dasharray="81.68 81.68" stroke-dashoffset="81.68" />
-          </g>
-        </g>
-      </g>
-    </svg>
-    <div class="preloader__text">
-      <p class="preloader__msg">Empty Cart</p>
-    </div>
-  </div>
-`;
-};
-const popupVisible = (data) => {
-  popupCart.innerHTML = `<p>${data.countCart}</p>`;
-  popupCart.style.opacity = "1";
-  popupCartXs.innerHTML = `<p>${data.countCart}</p>`;
-  popupCartXs.style.opacity = "1";
-};
-const popupHidden = () => {
-  popupCart.innerHTML = "";
-  popupCart.style.opacity = "0";
-  popupCartXs.innerHTML = "";
-  popupCartXs.style.opacity = "0";
-};
 
-socket.on("addProductToCart", (data) => {
-  cardPrevius.textContent = "";
-  totalCart.textContent = "";
-  data.productsInCart.forEach((prod) => {
-    updatecart(prod);
-  });
-  totalCart.innerHTML = data.totalCart;
-  sectionTotal.style.display = "flex";
-  sectionButtons.style.display = "flex";
-  popupVisible(data);
+`
+}
+const popupVisible = data => {
+  popupCart.innerHTML = `<p>${data.countCart}</p>`
+  popupCart.style.opacity = '1'
+  popupCartXs.innerHTML = `<p>${data.countCart}</p>`
+  popupCartXs.style.opacity = '1'
+}
+const domHidden = () => {
+  sectionTotal.style.display = 'none'
+  sectionButtons.style.display = 'none'
+  popupCart.innerHTML = ''
+  popupCart.style.opacity = '0'
+  popupCartXs.innerHTML = ''
+  popupCartXs.style.opacity = '0'
+}
 
-  //Funcion para eliminar carrito
-  const cartDelete = document.querySelectorAll(".cartDelete");
+socket.on('addProductToCart', data => {
+  cardPrevius.textContent = ''
+  totalCart.textContent = ''
+  data.productsInCart.forEach(prod => {
+    updatecart(prod)
+  })
+  totalCart.innerHTML = data.totalCart
+  sectionTotal.style.display = 'flex'
+  sectionButtons.style.display = 'flex'
+  popupVisible(data)
+  
+  const cartDelete = document.querySelectorAll('.cartDelete')
   for (let i = 0; i < cartDelete.length; i++) {
-    cartDelete[i].addEventListener("click", (e) => {
-      let idProduct = cartDelete[i].getAttribute("data-id");
-      socket.emit("deleteProductToCart", idProduct);
-    });
+    cartDelete[i].addEventListener('click', e => {
+      const idProduct = cartDelete[i].getAttribute('data-id')
+      socket.emit('deleteProductToCart', idProduct)
+      cartDelete[i].classList.add('clicked')
+    })
   }
-});
+})
 
-socket.on("deleteProductToCart", (data) => {
-  cardPrevius.textContent = "";
-  totalCart.textContent = "";
-  if (data.totalCart === 0) {
-    emptyCart();
-    sectionTotal.style.display = "none";
-    sectionButtons.style.display = "none";
-    popupHidden();
-  } else {
-    data.productsInCart.forEach((prod) => {
-      updatecart(prod);
-    });
-    popupVisible(data);
-    totalCart.innerHTML = data.totalCart;
-  }
-});
+socket.on('deleteProductToCart', data => {
+  setTimeout(() => {
+    cardPrevius.textContent = ''
+    totalCart.textContent = ''
+    if (data.totalCart === 0) {
+      emptyCart()
+      domHidden()
+    } else {
+      data.productsInCart.forEach(prod => {
+        updatecart(prod)
+      })
+      popupVisible(data)
+      totalCart.innerHTML = data.totalCart
+    }
+  }, 500)
+})
 
-vaciarcarrito.addEventListener("click", () => {
-  socket.emit("emptyCart");
-});
-socket.on("emptyCart", (data) => {
-  cardPrevius.textContent = "";
-  totalCart.textContent = "";
-  emptyCart();
-  sectionTotal.style.display = "none";
-  sectionButtons.style.display = "none";
-  popupHidden();
-});
+vaciarcarrito.addEventListener('click', () => {
+  socket.emit('emptyCart')
+})
+socket.on('emptyCart', data => {
+  cardPrevius.textContent = ''
+  totalCart.textContent = ''
+  emptyCart()
+  domHidden()
+})
+
+const cardMore = document.getElementById('cardMore')
+cardMore.addEventListener('click', () => {
+  cardMore.classList.toggle('is-selected')
+})
+
+

@@ -1,6 +1,6 @@
 <main class="mainHome">
   {{> user}}
-  <h2>Productos</h2>
+  <h2>E-commerce</h2>
   
   <div class="containerCards">
     {{#each products}}
@@ -8,19 +8,10 @@
         <img
           class="imgCard"
           src={{this.thumbnail}}
-          alt={{this.title}}
+          alt=""
         />
-        <div class="priceCard">
-          <p>$</p>
-          <p class="price">{{this.price}}</p>
-        </div>
+
         <div class="btnContainer">
-        <div class="btnCard">
-        </div>
-        <div class="btnCard">
-        </div>
-        <div class="btnCard">
-        </div>
         <div class="btnCard addToCart" data-id={{this._id}}>
           <ion-icon class="icon" name="cart-outline"></ion-icon>
           <span class="iconTooltip">Agregar al carrito</span>
@@ -29,10 +20,11 @@
         <div class="descriptionCard">
           <h2 class="titleCard">{{this.title}}</h2>
           <div class="authorStock">
-            <span>{{this.author}}</span>
             <div class="stockCard">
               <span>Stock:</span>
               <span>{{this.stock}}</span>
+               <span>Precio:</span>
+              <span>{{this.price}}</span>
             </div>
           </div>
         </div>
